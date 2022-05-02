@@ -20,17 +20,12 @@ struct Node* newNode(vector<int> arr)
     return temp;
 }
 
-Node* insertRec(Node* root, vector<int> point, unsigned depth)
-{
-    // Tree is empty?
+Node* insertRec(Node* root, vector<int> point, unsigned depth){
     if (root == NULL)
         return newNode(point);
 
-    // Calculate current dimension (cd) of comparison
     unsigned cd = depth % point.size();
 
-    // Compare the new point with root on current dimension 'cd'
-    // and decide the left or right subtree
     if (point[cd] < (root->point[cd]))
         root->left = insertRec(root->left, point, depth + 1);
     else
@@ -39,19 +34,11 @@ Node* insertRec(Node* root, vector<int> point, unsigned depth)
     return root;
 }
 
-// Function to insert a new point with given point in
-// KD Tree and return new root. It mainly uses above recursive
-// function "insertRec()"
-Node* insert(Node* root, vector<int> point)
-{
+Node* insert(Node* root, vector<int> point){
     return insertRec(root, point, 0);
 }
 
-// A utility method to determine if two Points are same
-// in K Dimensional space
-bool arePointsSame(vector<int> point1, vector<int> point2)
-{
-    // Compare individual pointinate values
+bool arePointsSame(vector<int> point1, vector<int> point2){
     for (int i = 0; i < point1.size(); ++i)
         if (point1[i] != point2[i])
             return false;
@@ -59,8 +46,7 @@ bool arePointsSame(vector<int> point1, vector<int> point2)
     return true;
 }
 
-Node* minNode(Node* x, Node* y, Node* z, int d)
-{
+Node* minNode(Node* x, Node* y, Node* z, int d){
     Node* res = x;
     if (y != NULL && y->point[d] < res->point[d])
         res = y;
@@ -69,42 +55,23 @@ Node* minNode(Node* x, Node* y, Node* z, int d)
     return res;
 }
 
-// Recursively finds minimum of d'th dimension in KD tree
-// The parameter depth is used to determine current axis.
-Node* findMinRec(Node* root, int d, unsigned depth)
-{
-    // Base cases
+Node* findMinRec(Node* root, int d, unsigned depth){
     if (root == NULL)
         return NULL;
 
-    // Current dimension is computed using current depth and total
-    // dimensions (k)
     unsigned cd = depth % root->point.size();
 
-    // Compare point with root with respect to cd (Current dimension)
-    if (cd == d)
-    {
+    if (cd == d){
         if (root->left == NULL)
             return root;
         return findMinRec(root->left, d, depth + 1);
     }
 
-    // If current dimension is different then minimum can be anywhere
-    // in this subtree
-    return minNode(root,
-        findMinRec(root->left, d, depth + 1),
-        findMinRec(root->right, d, depth + 1), d);
+    return minNode(root, findMinRec(root->left, d, depth + 1), findMinRec(root->right, d, depth + 1), d);
 }
 
-// A wrapper over findMinRec(). Returns minimum of d'th dimension
-Node* findMin(Node* root, int d)
-{
-    // Pass current level or depth as 0
+Node* findMin(Node* root, int d){
     return findMinRec(root, d, 0);
-}
-
-void copyPoint(vector<int> &p1, vector<int> &p2){
-    p1 = p2;
 }
 
 Node* deleteNodeRec(Node* root, vector<int> point, int depth){
